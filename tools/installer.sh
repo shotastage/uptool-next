@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 function operating_system {
     if [ "$(uname)" == 'Darwin' ]; then
         OS="macOS"
@@ -10,14 +9,12 @@ function operating_system {
         OS="Other"
     fi
 
-    echo $OS
+    echo "${OS}"
 }
 
 function before_preparation {
-    if [ ${1} = "Linux" ]; then
-        if type git > /dev/null 2>&1; then
-            :
-        else
+    if [ "${1}" == "Linux" ]; then
+        if ! command -v git >/dev/null 2>&1; then
             sudo apt-get update -y
             sudo apt-get install git -y
         fi
@@ -25,47 +22,98 @@ function before_preparation {
 }
 
 
+function _download_and_extract {
+    curl -fO https://www.python.org/ftp/python/3.12.2/Python-3.12.2.tar.xz || { echo "Download failed"; exit 1; }
+    echo "📦  Extracting archive package..."
+    tar -xJf Python-3.12.2.tar.xz > /dev/null 2>&1
+}
+
+function _configure_build {
+    echo "🛠️ Configuraing build..."
+    ./configure --enable-optimizations --prefix=$HOME/.uptx/runtime/ &> configure.log &
+    PID=$!
+    while kill -0 $PID 2> /dev/null; do
+        echo -n "#"
+        sleep 1
+    done
+    echo
+}
+
+function _build_python {
+    echo "🏗️  Building Python runtime for Uptool..."
+    make &> make.log &
+    PID=$!
+    while kill -0 $PID 2> /dev/null; do
+        echo -n "#"
+        sleep 2
+    done
+    echo
+}
+
+function build_install_python {
+
+    _download_and_extract
+    cd ./Python-3.12.2/
+
+
+    _configure_build
+
+    _build_python
+
+    echo "💾  Installing Python runtime for Uptool..."
+
+    make install &> make_install.log &
+    PID=$!
+    while kill -0 $PID 2> /dev/null; do
+        echo -n "#"
+        sleep 1
+    done
+    echo
+
+    ln -s $HOME/.uptx/runtime/bin/python3 $HOME/.uptx/runtime/bin/python
+
+    cd ..
+}
+
 ##### Check ######################################################################
-if [ -e $HOME/.uptx/bin/ ]; then
+if [ -e "${HOME}/.uptx/bin/" ]; then
     echo "👻 UpScripts already installed!"
     exit 1
 fi
 
-
-if [ -e $HOME/.uptx_installation ]; then
+if [ -e "${HOME}/.uptx_installation" ]; then
     echo "👻  Installation directory already exists!"
     echo "👻  Clean existing directory before starting installation."
-    rm -rf $HOME/.uptx_installation/
+    rm -rf "${HOME}/.uptx_installation/"
 fi
 
-
-
 ##### Main #######################################################################
-cd $HOME
-cd $HOME
+cd "${HOME}" || exit
 
-# Prepatation
-before_preparation $(operating_system)
-
+# Preparation
+before_preparation "$(operating_system)"
 
 # Workspace preparation
 mkdir .uptx_installation
-cd .uptx_installation
+cd .uptx_installation || exit
 git clone https://github.com/shotastage/uptool-next.git
 
+# Download & Build Python Runtime
+build_install_python
 
 
 # Main Install Process
-cd uptool-next
-echo Nothing to do now!
+cd uptool-next || exit
+echo "Nothing to do now!"
+
 
 # Shell Configuration
-echo Nothing to do now!
+echo "Nothing to do now!"
 
 
 # Cleaning
 echo "🧹  Cleaning..."
-cd
+cd || exit
 rm -rf .uptx_installation/
 
 # Completed!

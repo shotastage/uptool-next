@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+PYTHON_BUILD_CACHE="$HOME/.uptx_runtime_backup.tar.xz"
+
+
 function operating_system {
     if [ "$(uname)" == 'Darwin' ]; then
         OS="macOS"
@@ -29,7 +32,7 @@ function _download_and_extract {
 }
 
 function _configure_build {
-    echo "🛠️ Configuraing build..."
+    echo "🛠️  Configuraing build..."
     ./configure --enable-optimizations --prefix=$HOME/.uptx/runtime/ &> configure.log &
     PID=$!
     while kill -0 $PID 2> /dev/null; do
@@ -37,6 +40,10 @@ function _configure_build {
         sleep 1
     done
     echo
+}
+
+function _caching_build {
+    tar -cJf $PYTHON_BUILD_CACHE -C $HOME/.uptx/runtime/ .
 }
 
 function _build_python {
@@ -51,28 +58,29 @@ function _build_python {
 }
 
 function build_install_python {
+    if [ -f "$PYTHON_BUILD_CACHE" ]; then
+        mkdir -p $HOME/.uptx/runtime
+        tar -xJf $PYTHON_BUILD_CACHE -C $HOME/.uptx/runtime
+    else
+        _download_and_extract
+        cd ./Python-3.12.2/
+        _configure_build
+        _build_python
+        echo "💾  Installing Python runtime for Uptool..."
+        make install &> make_install.log &
+        PID=$!
+        while kill -0 $PID 2> /dev/null; do
+            echo -n "#"
+            sleep 1
+        done
+        echo
+        _caching_build
 
-    _download_and_extract
-    cd ./Python-3.12.2/
+        cd ..
 
-
-    _configure_build
-
-    _build_python
-
-    echo "💾  Installing Python runtime for Uptool..."
-
-    make install &> make_install.log &
-    PID=$!
-    while kill -0 $PID 2> /dev/null; do
-        echo -n "#"
-        sleep 1
-    done
-    echo
-
+    fi
+    
     ln -s $HOME/.uptx/runtime/bin/python3 $HOME/.uptx/runtime/bin/python
-
-    cd ..
 }
 
 ##### Check ######################################################################
@@ -104,7 +112,7 @@ build_install_python
 
 # Main Install Process
 cd uptool-next || exit
-echo "Nothing to do now!"
+mv bin/uptool $HOME/.uptx/bin/uptool
 
 
 # Shell Configuration

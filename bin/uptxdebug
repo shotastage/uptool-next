@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+PYTHON_SCRIPT="uptool.py"
+"$HOME/.uptx/runtime/bin/python" "$PYTHON_SCRIPT" "$@"

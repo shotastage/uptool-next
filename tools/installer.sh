@@ -112,7 +112,11 @@ build_install_python
 
 # Main Install Process
 cd uptool-next || exit
+mkdir -p $HOME/.uptx/bin/
+mkdir -p $HOME/.uptx/libexec/
+
 mv bin/uptx $HOME/.uptx/bin/uptx
+mv uptool.py $HOME/.uptx/libexec/
 
 
 # Shell Configuration
@@ -121,8 +125,11 @@ zshenv_path="$HOME/.zshenv"
 zshrc_path="$HOME/.zshrc"
 
 function check_and_append_path() {
+  echo "🐚  Adding PATH to default shell configuration..."
   local file_path=$1
   if ! grep -q "\$HOME/.uptx/bin" "$file_path"; then
+    echo "" >> "$file_path"
+    echo "#### Uptool Path ####" >> "$file_path"
     echo "$export_line" >> "$file_path"
   fi
 }

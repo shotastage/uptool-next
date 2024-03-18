@@ -1,16 +1,24 @@
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser(description='Add two numbers.')
+    parser = argparse.ArgumentParser(description='Uptool command line interface.')
 
-    parser.add_argument('--number1', type=int, help='The first number', required=True)
-    parser.add_argument('--number2', type=int, help='The second number', required=True)
+    # actions: intall,
+    parser.add_argument('action', help='The action to perform (e.g., install, remove).')
+
+    # options: --force
+    parser.add_argument('--force', action='store_true', help='Force the action.')
+
+    # targets: 
+    parser.add_argument('targets', nargs='+', help='The targets for the action.')
+
 
     args = parser.parse_args()
 
-    result = args.number1 + args.number2
-
-    print(f"The sum of {args.number1} and {args.number2} is {result}.")
+    print(f"Action: {args.action}")
+    if args.force:
+        print("Option: --force")
+    print(f"Targets: {args.targets}")
 
 if __name__ == "__main__":
     main()

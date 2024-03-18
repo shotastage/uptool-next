@@ -112,11 +112,31 @@ build_install_python
 
 # Main Install Process
 cd uptool-next || exit
-mv bin/uptool $HOME/.uptx/bin/uptool
+mv bin/uptx $HOME/.uptx/bin/uptx
 
 
 # Shell Configuration
-echo "Nothing to do now!"
+export_line="export PATH=\"\$HOME/.uptx/bin:\$PATH\""
+zshenv_path="$HOME/.zshenv"
+zshrc_path="$HOME/.zshrc"
+
+function check_and_append_path() {
+  local file_path=$1
+  if ! grep -q "\$HOME/.uptx/bin" "$file_path"; then
+    echo "$export_line" >> "$file_path"
+  fi
+}
+
+if [ -f "$zshenv_path" ]; then
+  check_and_append_path "$zshenv_path"
+else
+  if [ -f "$zshrc_path" ]; then
+    check_and_append_path "$zshrc_path"
+  else
+    echo "$export_line" > "$zshrc_path"
+  fi
+fi
+
 
 
 # Cleaning

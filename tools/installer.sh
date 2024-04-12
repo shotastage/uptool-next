@@ -26,9 +26,9 @@ function before_preparation {
 
 
 function _download_and_extract {
-    curl -fO https://www.python.org/ftp/python/3.12.2/Python-3.12.2.tar.xz || { echo "Download failed"; exit 1; }
+    curl -fO https://www.python.org/ftp/python/3.12.3/Python-3.12.3.tar.xz || { echo "Download failed"; exit 1; }
     echo "📦  Extracting archive package..."
-    tar -xJf Python-3.12.2.tar.xz > /dev/null 2>&1
+    tar -xJf Python-3.12.3.tar.xz > /dev/null 2>&1
 }
 
 function _configure_build {
@@ -63,7 +63,7 @@ function build_install_python {
         tar -xJf $PYTHON_BUILD_CACHE -C $HOME/.uptx/runtime
     else
         _download_and_extract
-        cd ./Python-3.12.2/
+        cd ./Python-3.12.3/
         _configure_build
         _build_python
         echo "💾  Installing Python runtime for Uptool..."
@@ -143,7 +143,6 @@ else
     echo "$export_line" > "$zshrc_path"
   fi
 fi
-
 
 
 # Cleaning

@@ -3,8 +3,8 @@ import argparse
 def main():
     parser = argparse.ArgumentParser(description='Uptool command line interface.')
 
-    # actions: intall,
-    parser.add_argument('action', help='The action to perform (e.g., install, remove).')
+    # actions: install,
+    parser.add_argument('install', help='The action to perform (e.g., install, remove).')
 
     # options: --force
     parser.add_argument('--force', action='store_true', help='Force the action.')

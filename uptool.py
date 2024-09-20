@@ -9,9 +9,8 @@ def main():
     # options: --force
     parser.add_argument('--force', action='store_true', help='Force the action.')
 
-    # targets: 
+    # targets:
     parser.add_argument('targets', nargs='+', help='The targets for the action.')
-
 
     args = parser.parse_args()
 

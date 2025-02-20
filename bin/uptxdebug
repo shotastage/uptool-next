@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 
+echo "THIS IS DEBUG MODE"
+
 PYTHON_SCRIPT="uptool.py"
 "$HOME/.uptx/runtime/bin/python" "$PYTHON_SCRIPT" "$@"

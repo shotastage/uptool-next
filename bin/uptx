@@ -2,6 +2,4 @@
 
 PYTHON_SCRIPT="$HOME/.uptx/libexec/uptool.py"
 
-echo "NOW UNDER CONSTRUCTION..."
-
 "$HOME/.uptx/runtime/bin/python" "$PYTHON_SCRIPT" "$@"

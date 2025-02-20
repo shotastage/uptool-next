@@ -9,7 +9,7 @@ def homebrew_install(pkg_name):
     if subprocess.run(["which", "brew"], capture_output=True).returncode != 0:
         print("Homebrew is not installed. Please install Homebrew first.")
         return
-    
+
     result = subprocess.run(["brew", "list"], capture_output=True, text=True)
     if pkg_name in result.stdout.split():
         print(f"{pkg_name} is already installed.")

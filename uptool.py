@@ -20,4 +20,5 @@ def main():
     print(f"Targets: {args.targets}")
 
 if __name__ == "__main__":
+    print("WARNING: This is a development version of uptool.\n")
     main()

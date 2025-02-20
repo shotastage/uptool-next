@@ -1,5 +1,6 @@
 import platform
 import subprocess
+from uppkg import UptxPkg
 
 def homebrew_install(pkg_name):
     if platform.system().lower() != "darwin":
@@ -18,3 +19,9 @@ def homebrew_install(pkg_name):
         subprocess.run(["brew", "update"])
         subprocess.run(["brew", "install", pkg_name])
         print(f"{pkg_name} has been installed.")
+
+
+class HomebrewBackend(UptxPkg):
+    
+    def install(self):
+        homebrew_install(self.name)
